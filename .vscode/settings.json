@@ -1,0 +1,10 @@
+{
+  "editor.wordWrapColumn": 100,
+  "python.envFile": "/Users/joaquingumuciolabbe/.local/share/virtualenvs/ms-requests-tests-PZkxr0Hc",
+  "python.pythonPath": "/Users/joaquingumuciolabbe/.local/share/virtualenvs/ms-requests-tests-PZkxr0Hc/bin/python",
+  "python.linting.pylintEnabled": true,
+  "python.linting.enabled": true,
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true,
+  "workbench.enableExperiments": false
+}
