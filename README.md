@@ -3,7 +3,7 @@ Python module to test Moleculer Services endpoints (or any REST API)
 
 #### Using a JSON configurarion file, test your REST API endpoints.
 
-**Resources** Correspond to API endponts. Ex: https://some-domain/api/<resource>
+**Resources** Correspond to *API* endpoints. Ex: https://some-domain/api/<resource>
 Nested inside *resources*, set the *REST* actions and the data they need to be tested. Ex: *create*, *update*, etc.
 
 **Example file:**
@@ -12,7 +12,7 @@ Nested inside *resources*, set the *REST* actions and the data they need to be t
 {
   "api_url": "<api-root-url>",
   "headers": {
-    "A-Header": "<header-value>"
+    "<header-key>": "<header-value>"
   },
   "resources": {
     "<resource-name>": {
