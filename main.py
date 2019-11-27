@@ -18,12 +18,13 @@ class MSTester:
 
         super().__init__()
         # Id of the document used for tests (created by the "test_create" method)
-        self.test_document_id = ""
+        self.test_document_ids = {}
         # Auth token for authenticated requests
         self.auth_token = ""
         try:
             self.config = json.loads(
                 open(config_path or "config.json", "r").read())
+
             for resource, actions in self.config["resources"].items():
                 print(f"""[+] TESTING {resource} RESOURCE""")
                 request_url = f"""{self.config["api_url"]}/{resource}"""
@@ -38,19 +39,19 @@ class MSTester:
                         self.test_login(request_url, data, headers)
                     if action == "create":
                         print("     [+] TESTING CREATE ACTION")
-                        self.test_create(request_url, data, headers)
+                        self.test_create(request_url, resource, data, headers)
                     elif action == "update":
                         print("     [+] TESTING UPDATE ACTION")
-                        self.test_update(request_url, data, headers)
+                        self.test_update(request_url, resource, data, headers)
                     elif action == "get":
                         print("     [+] TESTING GET ACTION")
-                        self.test_get_one(request_url, headers)
+                        self.test_get_one(request_url, resource, headers)
                     elif action == "list":
                         print("     [+] TESTING LIST ACTION")
                         self.test_list(request_url, headers)
-                    elif action == "delete":
+                    elif action == "remove":
                         print("     [+] TESTING DELETE ACTION")
-                        self.test_delete(request_url, headers)
+                        self.test_delete(request_url, resource, headers)
 
         except (FileNotFoundError, json.decoder.JSONDecodeError) as e:
             self.gracefull_exit(
@@ -69,49 +70,50 @@ class MSTester:
             response = response.json()
             self.auth_token = response["services"]["authToken"]
         except Exception as e:
-            print(f"""[!] Error on test: {e}""")
+            print(f"""      [!] Error on test: {e}""")
 
-    def test_create(self, request_url, data, headers):
+    def test_create(self, request_url, resource, data, headers):
         try:
-            response = requests.post(request_url, data=data, headers=headers)
-            self.test_document_id = response.json()["id"]
+            response = requests.post(
+                request_url, data=data, headers=headers).json()
+            self.test_document_ids[resource] = response["id"]
         except Exception as e:
-            print(f"""[!] Error on test: {e}""")
+            print(f"""      [!] Error on test: {e}. Response: {response}""")
 
-    def test_update(self, request_url, data, headers):
+    def test_update(self, request_url, resource, data, headers):
         try:
             response = requests.put(
-                f"""{request_url}/{self.test_document_id}""", data=data, headers=headers).json()
+                f"""{request_url}/{self.test_document_ids[resource]}""", data=data, headers=headers).json()
             if not response["id"]:
-                print("[-] Warning: Check the response of update action")
+                print("     [-] Warning: Check the response of update action")
         except Exception as e:
-            print(f"""[!] Error on test: {e}""")
+            print(f"""      [!] Error on test: {e}. Response: {response}""")
 
-    def test_get_one(self, request_url, headers):
+    def test_get_one(self, request_url, resource, headers):
         try:
             response = requests.get(
-                f"""{request_url}/{self.test_document_id}""", headers=headers).json()
+                f"""{request_url}/{self.test_document_ids[resource]}""", headers=headers).json()
             if not response["id"]:
-                print("[-] Warning: Check the response of update action")
+                print("     [-] Warning: Check the response of update action")
         except Exception as e:
-            print(f"""[!] Error on test: {e}""")
+            print(f"""      [!] Error on test: {e}. Response: {response}""")
 
     def test_list(self, request_url, headers):
         try:
             response = requests.get(request_url, headers=headers).json()
             if not isinstance(response, list):
-                print("[-] Warning: Check the response of update action")
+                print("     [-] Warning: Check the response of update action")
         except Exception as e:
-            print(f"""[!] Error on test: {e}""")
+            print(f"""      [!] Error on test: {e}. Response: {response}""")
 
-    def test_delete(self, request_url, headers):
+    def test_delete(self, request_url, resource, headers):
         try:
             response = requests.delete(
-                f"""{request_url}/{self.test_document_id}""", headers=headers).json()
+                f"""{request_url}/{self.test_document_ids[resource]}""", headers=headers).json()
             if not response["id"]:
-                print("[-] Warning: Check the response of update action")
+                print("     [-] Warning: Check the response of update action")
         except Exception as e:
-            print(f"""[!] Error on test: {e}""")
+            print(f"""      [!] Error on test: {e}. Response: {response}""")
 
 
 if __name__ == "__main__":
