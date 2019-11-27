@@ -81,6 +81,10 @@ class MSTester:
             print(f"""      [!] Error on test: {e}. Response: {response}""")
 
     def test_update(self, request_url, resource, data, headers):
+        if resource not in self.test_document_ids.keys():
+            print("     [-] Warning: No document to update. No id provided")
+            return
+
         try:
             response = requests.put(
                 f"""{request_url}/{self.test_document_ids[resource]}""", data=data, headers=headers).json()
@@ -90,6 +94,10 @@ class MSTester:
             print(f"""      [!] Error on test: {e}. Response: {response}""")
 
     def test_get_one(self, request_url, resource, headers):
+        if resource not in self.test_document_ids.keys():
+            print("     [-] Warning: No document to update. No id provided")
+            return
+
         try:
             response = requests.get(
                 f"""{request_url}/{self.test_document_ids[resource]}""", headers=headers).json()
@@ -107,6 +115,10 @@ class MSTester:
             print(f"""      [!] Error on test: {e}. Response: {response}""")
 
     def test_delete(self, request_url, resource, headers):
+        if resource not in self.test_document_ids.keys():
+            print("     [-] Warning: No document to update. No id provided")
+            return
+
         try:
             response = requests.delete(
                 f"""{request_url}/{self.test_document_ids[resource]}""", headers=headers).json()
