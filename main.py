@@ -52,6 +52,11 @@ class MSTester:
                     elif action == "remove":
                         print("     [+] TESTING DELETE ACTION")
                         self.test_delete(request_url, resource, headers)
+                    else:
+                        print("     [+] TESTING CUSTOM ACTION:", action)
+                        print("data:", data)
+                        # Tests non CRUD actions
+                        self.test_custom(request_url, action, data, headers)
 
         except (FileNotFoundError, json.decoder.JSONDecodeError) as e:
             self.gracefull_exit(
@@ -68,6 +73,7 @@ class MSTester:
             response = requests.post(
                 request_url + "/login", data=auth_data, headers=headers)
             response = response.json()
+            print("AUTH RESPONSE:", response)
             self.auth_token = response["services"]["authToken"]
         except Exception as e:
             print(f"""      [!] Error on test: {e}""")
@@ -123,6 +129,16 @@ class MSTester:
             response = requests.delete(
                 f"""{request_url}/{self.test_document_ids[resource]}""", headers=headers).json()
             if not response["id"]:
+                print("     [-] Warning: Check the response of update action")
+        except Exception as e:
+            print(f"""      [!] Error on test: {e}. Response: {response}""")
+
+    def test_custom(self, request_url, action, data, headers):
+        try:
+            print("data:", data)
+            response = requests.post(
+                f"""{request_url}/{action}""", data=data, headers=headers).json()
+            if not response:
                 print("     [-] Warning: Check the response of update action")
         except Exception as e:
             print(f"""      [!] Error on test: {e}. Response: {response}""")
